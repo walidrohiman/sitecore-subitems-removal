@@ -15,6 +15,8 @@ namespace SitecoreExtension.Utilities.Dialogs
     {
         protected TreeList treeList;
 
+        protected Checkbox checkbox;
+
         protected Database database = Factory.GetDatabase("master");
         protected override void OnLoad(EventArgs e)
         {
@@ -53,7 +55,14 @@ namespace SitecoreExtension.Utilities.Dialogs
 
                 using (new SecurityDisabler())
                 {
-                    sample.Recycle();
+                    if (checkbox.Checked)
+                    {
+                        sample.Delete();
+                    }
+                    else
+                    {
+                        sample.Recycle();
+                    }
                 }
             }
 
