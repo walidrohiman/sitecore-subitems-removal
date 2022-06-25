@@ -6,14 +6,14 @@ using Sitecore.Web.UI.Pages;
 using Sitecore.Configuration;
 using System;
 using Sitecore.Data;
-using System.Collections.Generic;
 using Sitecore.SecurityModel;
+using Checkbox = Sitecore.Shell.Applications.ContentEditor.Checkbox;
 
 namespace SitecoreExtension.Utilities.Dialogs
 {
     public class SetDeleteSubItems : DialogForm
     {
-        protected TreeList treeList;
+        protected MultilistEx SubItems;
 
         protected Checkbox checkbox;
 
@@ -26,20 +26,12 @@ namespace SitecoreExtension.Utilities.Dialogs
                 return;
             Item itemFromQueryString = UIUtil.GetItemFromQueryString(Context.ContentDatabase);
             Assert.IsNotNull(itemFromQueryString, "Item not found.");
-            treeList.SetValue(itemFromQueryString[FieldIDs.Branches]);
-            treeList.ItemLanguage = Context.Language.Name;
 
-            treeList.Source = itemFromQueryString.Paths.FullPath;
-
-            List<string> arrayItems = new List<string>();
-
-            foreach (Item child in itemFromQueryString.Children)
-            {
-                arrayItems.Add(child.Name);
-            }
-
-            treeList.ExcludeItemsForDisplay = itemFromQueryString.Name;
-            treeList.IncludeItemsForDisplay = string.Join(",", arrayItems);
+            //MultiList
+            SubItems.ItemLanguage = Context.Language.Name;
+            SubItems.Database = "master";
+            SubItems.Source = itemFromQueryString.Paths.FullPath;
+            SubItems.ItemID = itemFromQueryString.ID.ToString();
         }
 
         protected override void OnOK(object sender, EventArgs args)
@@ -47,7 +39,7 @@ namespace SitecoreExtension.Utilities.Dialogs
             Assert.ArgumentNotNull(sender, nameof(sender));
             Assert.ArgumentNotNull(args, nameof(args));
 
-            var arrayItem = treeList.GetValue().Split('|');
+            var arrayItem = SubItems.GetValue().Split('|');
 
             foreach (var item in arrayItem)
             {
